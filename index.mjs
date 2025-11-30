@@ -118,6 +118,63 @@ app.get("/quote/new", (req, res) => {
   res.render("newQuote");
 });
 
+app.post("/quote/new", async (req, res) => {
+  let sql = `
+    INSERT INTO q_quotes
+    (quote, authorId, category)
+    VALUES (?, ?, ?)
+  `;
+  let params = [req.body.quoteText, req.body.authorId, req.body.category];
+  const [rows] = await pool.query(sql, params);
+  res.render("newQuote", {"message": "Quote added!"});
+});
+
+app.get("/quote/edit", async (req, res) =>{
+  let quoteId = req.query.quoteId;
+
+  let sql = `
+    SELECT * 
+    FROM q_quotes
+    WHERE quoteId = ?
+    `; 
+
+  const [rows] = await pool.query(sql, [quoteId]);
+  res.render("editQuote", { quoteInfo: rows});
+});
+
+app.post("/quote/edit", async (req, res) => {
+  let sql = `
+    UPDATE q_quotes
+    SET quote = ?,
+        authorId = ?,
+        category = ?
+    WHERE quoteId =?
+`;
+
+  let params = [
+      req.body.quoteText,
+      req.body.authorId,
+      req.body.category,
+      req.body.quoteId
+  ];
+
+  const [rows] = await pool.query(sql, params);
+
+  res.redirect("/quotes");
+});
+
+app.get("/quote/delete", async function(req, res){
+ 
+  let quoteId = req.query.quoteId;
+
+  let sql = `DELETE
+            FROM q_quotes
+            WHERE quoteId = ?`;
+ const [rows] = await pool.query(sql, [quoteId]);
+ 
+ res.redirect("/quotes");
+});
+
 app.get("/dbTest", async(req, res) => {
    try {
         const [rows] = await pool.query("SELECT CURDATE()");
