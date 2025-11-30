@@ -1,0 +1,20 @@
+<body>
+
+
+ <h1> Update/Delete Authors </h1>
+
+
+ <% for (i=0; i < authors.length; i++) { %>
+
+
+   <a href="/author/edit?authorId=<%=authors[i].authorId%>">UPDATE</a>
+
+
+   <a href="/author/delete?authorId=<%=authors[i].authorId%>">DELETE</a>
+
+
+   <%=authors[i].firstName%>
+   <%=authors[i].lastName%> <br>
+
+
+ <% } %>
