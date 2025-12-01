@@ -11,16 +11,31 @@
       <textarea name="quoteText" rows="4" cols="50"><%= quoteInfo[0].quote %></textarea>
       <br>
 
-      Author ID:
-      <input type="number" name="authorId" value="<%=quoteInfo[0].authorId%>">
-      <br>
-      
-      Category:
-      <input type="text" name="category"  value="<%=quoteInfo[0].category%>">
-      <br>
+      Author:<br>
+    <select name="authorId" required>
+      <% authors.forEach(author => { %>
+        <option value="<%= author.authorId %>" 
+          <%= author.authorId === quoteInfo[0].authorId ? 'selected' : '' %>>
+          <%= author.firstName %> <%= author.lastName %>
+        </option>
+      <% }) %>
+    </select>
+    <br>
 
-      Likes:
-      <input type="number" name="likes" value="<%=quoteInfo[0].likes%>"><br>
+    Category:<br>
+    <select name="category" required>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat %>" 
+          <%= cat === quoteInfo[0].category ? 'selected' : '' %>>
+          <%= cat %>
+        </option>
+      <% }) %>
+    </select>
+    <br>
+
+    Likes:<br>
+    <input type="number" name="likes" value="<%= quoteInfo[0].likes || 0 %>">
+    <br><br>
 
       <button>Update Quote</button>
 

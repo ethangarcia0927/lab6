@@ -2,23 +2,25 @@
 <body>
 
 
- <h1> Update/Delete Quotes </h1>
+ <h1>Quotes</h1>
 
- <a href="/quote/new">Add New Quote</a> <br><br>
+  <a href="/quote/new">Add New Quote</a> <br><br>
 
-
- <% for (i=0; i < quotes.length; i++) { %>
-
-
-   <a href="/quote/edit?quoteId=<%=quotes[i].quoteId%>">UPDATE</a>
-
-
-   <a href="/quote/delete?quoteId=<%=quotes[i].quoteId%>">DELETE</a>
-
-
-   "<%=quotes[i].quote%>" — Author ID: <%=quotes[i].authorId%>
-    <br><br>
-
-
- <% } %>
+  <% if (quotes.length === 0) { %>
+    <p>No quotes found.</p>
+  <% } else { %>
+    <% quotes.forEach(q => { %>
+      <div style="margin-bottom: 20px;">
+        "<%= q.quote %>"<br>
+        <strong>Author:</strong> <%= q.firstName %> <%= q.lastName %> <br>
+        <strong>Category:</strong> <%= q.category %> <br>
+        <strong>Likes:</strong> <%= q.likes %> <br>
+        <a href="/quote/edit?quoteId=<%= q.quoteId %>">UPDATE</a> |
+        <a href="/quote/delete?quoteId=<%= q.quoteId %>">DELETE</a>
+      </div>
+      <hr>
+    <% }) %>
+  <% } %>
+</body>
+</html>
 <%- include("partials/footer.ejs") %>

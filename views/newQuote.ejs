@@ -5,12 +5,27 @@
     <form method="POST" action="/quote/new">
       Quote Text:
       <textarea name="quoteText" rows="4" cols="50"></textarea><br>
-      Author ID:
-      <input type="number" name="authorId"><br>
-      Category:
-      <input type="text" name="category"><br>
-      Likes:
-      <input type="number" name="likes"><br>
+      
+      Author:<br>
+    <select name="authorId" required>
+      <% authors.forEach(author => { %>
+        <option value="<%= author.authorId %>"><%= author.firstName %> <%= author.lastName %></option>
+      <% }) %>
+    </select>
+    <br>
+
+    Category:<br>
+    <select name="category" required>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat %>"><%= cat %></option>
+      <% }) %>
+    </select>
+    <br>
+
+    Likes:<br>
+    <input type="number" name="likes" value="0">
+    <br><br>
+
       
       <button>Add Quote</button>
     </form>

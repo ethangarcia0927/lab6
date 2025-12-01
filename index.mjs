@@ -105,18 +105,23 @@ app.get("/author/delete", async function(req, res){
 });
 
 app.get("/quotes", async function(req, res){
- 
-  let sql = `SELECT *
-            FROM q_quotes
-            ORDER BY quoteId`;
- const [rows] = await pool.query(sql);
- 
- res.render("quoteList", { quotes: rows });
+  let sql = `
+    SELECT q.quoteId, q.quote, q.category, q.likes, 
+           a.firstName, a.lastName
+    FROM q_quotes q
+    JOIN q_authors a ON q.authorId = a.authorId
+    ORDER BY q.quoteId
+  `;
+  const [rows] = await pool.query(sql);
+  res.render("quoteList", { quotes: rows });
 });
 
-app.get("/quote/new", (req, res) => {
-  res.render("newQuote");
+app.get("/quote/new", async (req, res) => {
+  const [authors] = await pool.query(`SELECT authorId, firstName, lastName FROM q_authors ORDER BY lastName`);
+  const [categories] = await pool.query(`SELECT DISTINCT category FROM q_quotes ORDER BY category`);
+  res.render("newQuote", { authors, categories });
 });
+
 
 app.post("/quote/new", async (req, res) => {
   let sql = `
@@ -129,18 +134,30 @@ app.post("/quote/new", async (req, res) => {
   res.render("newQuote", {"message": "Quote added!"});
 });
 
-app.get("/quote/edit", async (req, res) =>{
+app.get("/quote/edit", async (req, res) => {
   let quoteId = req.query.quoteId;
 
-  let sql = `
-    SELECT * 
-    FROM q_quotes
-    WHERE quoteId = ?
-    `; 
+  // Get quote
+  let sqlQuote = `SELECT * FROM q_quotes WHERE quoteId = ?`;
+  const [quoteRows] = await pool.query(sqlQuote, [quoteId]);
 
-  const [rows] = await pool.query(sql, [quoteId]);
-  res.render("editQuote", { quoteInfo: rows});
+  // Get all authors
+  let sqlAuthors = `SELECT authorId, firstName, lastName FROM q_authors ORDER BY lastName`;
+  const [authorRows] = await pool.query(sqlAuthors);
+
+  // Get all categories (distinct)
+  let sqlCategories = `SELECT DISTINCT category FROM q_quotes ORDER BY category`;
+  const [categoryRows] = await pool.query(sqlCategories);
+  const categories = categoryRows.map(row => row.category);
+
+  res.render("editQuote", {
+    quoteInfo: quoteRows,
+    authors: authorRows,
+    categories: categories
+  });
 });
+
+
 
 app.post("/quote/edit", async (req, res) => {
   let sql = `
@@ -190,5 +207,3 @@ app.get("/dbTest", async(req, res) => {
 app.listen(3000, ()=>{
     console.log("Express server running")
 })
-
-app.use(express.urlencoded({ extended: true }));
