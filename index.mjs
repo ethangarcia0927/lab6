@@ -111,7 +111,7 @@ app.get("/quotes", async function(req, res){
             ORDER BY quoteId`;
  const [rows] = await pool.query(sql);
  
- res.render("listQuote", { quotes: rows });
+ res.render("quoteList", { quotes: rows });
 });
 
 app.get("/quote/new", (req, res) => {
@@ -121,10 +121,10 @@ app.get("/quote/new", (req, res) => {
 app.post("/quote/new", async (req, res) => {
   let sql = `
     INSERT INTO q_quotes
-    (quote, authorId, category)
-    VALUES (?, ?, ?)
+    (quote, authorId, category, likes)
+    VALUES (?, ?, ?, ?)
   `;
-  let params = [req.body.quoteText, req.body.authorId, req.body.category];
+  let params = [req.body.quoteText, req.body.authorId, req.body.category, req.body.likes];
   const [rows] = await pool.query(sql, params);
   res.render("newQuote", {"message": "Quote added!"});
 });
@@ -144,21 +144,23 @@ app.get("/quote/edit", async (req, res) =>{
 
 app.post("/quote/edit", async (req, res) => {
   let sql = `
-    UPDATE q_quotes
-    SET quote = ?,
-        authorId = ?,
-        category = ?
-    WHERE quoteId =?
+  UPDATE q_quotes
+  SET \`quote\` = ?,
+      authorId = ?,
+      category = ?,
+      likes = ?
+  WHERE quoteId = ?
 `;
 
   let params = [
-      req.body.quoteText,
-      req.body.authorId,
-      req.body.category,
-      req.body.quoteId
+    req.body.quoteText,
+    req.body.authorId,
+    req.body.category,
+    req.body.likes,
+    req.body.quoteId
   ];
 
-  const [rows] = await pool.query(sql, params);
+  await pool.query(sql, params);
 
   res.redirect("/quotes");
 });
@@ -188,3 +190,5 @@ app.get("/dbTest", async(req, res) => {
 app.listen(3000, ()=>{
     console.log("Express server running")
 })
+
+app.use(express.urlencoded({ extended: true }));

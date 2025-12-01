@@ -1,4 +1,5 @@
-  <h1>Adding a new Author</h1>
+ <%- include("partials/header.ejs") %>
+ <h1>Adding a new Author</h1>
 
 
     <form method="POST" action="/author/new">
@@ -35,3 +36,4 @@
     <% if (typeof message != "undefined"){ %>
   		 <h3><%=message%></h3>
 <% } %>
+<%- include("partials/footer.ejs") %>

@@ -1,0 +1,22 @@
+  <%- include("partials/header.ejs") %>
+  <h1>Adding a new Quote</h1>
+
+
+    <form method="POST" action="/quote/new">
+      Quote Text:
+      <textarea name="quoteText" rows="4" cols="50"></textarea><br>
+      Author ID:
+      <input type="number" name="authorId"><br>
+      Category:
+      <input type="text" name="category"><br>
+      Likes:
+      <input type="number" name="likes"><br>
+      
+      <button>Add Quote</button>
+    </form>
+
+    <% if (typeof message != "undefined"){ %>
+  		 <h3><%=message%></h3>
+<% } %>
+
+<%- include("partials/footer.ejs") %>
